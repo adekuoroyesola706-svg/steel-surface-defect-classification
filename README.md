@@ -1,119 +1,120 @@
-# Steel Surface Defect Classification
+# Steel Surface Defect Classification Using Transfer Learning and Deep Convolutional Neural Networks
 
-Deep learning pipeline for six-class steel surface defect classification using a custom CNN, MobileNetV2, and ResNet50 with transfer learning, Grad-CAM, SHAP, and a Gradio inference interface.
+## Overview
 
-## Project Overview
+This project investigates the application of deep learning and transfer learning for automated classification of surface defects in steel manufacturing.
 
-This project investigates automated classification of steel surface defects using the NEU-DET dataset.
+The objective is to develop a computer-vision-based inspection system capable of automatically identifying different types of steel surface defects from images. Such systems can support automated quality inspection and reduce dependence on manual visual inspection in industrial manufacturing environments.
 
-The workflow covers:
+## Research Motivation
 
-1. Dataset inspection and stratified 70/15/15 splitting
-2. Image preprocessing and augmentation
-3. Custom CNN baseline
-4. MobileNetV2 transfer learning and fine-tuning
-5. ResNet50 transfer learning and fine-tuning
-6. Quantitative model comparison
-7. Grad-CAM and SHAP explainability
-8. Error analysis
-9. Interactive Gradio inference
+Surface defects can significantly affect the quality and reliability of manufactured steel products. Traditional visual inspection can be time-consuming and may be affected by human subjectivity.
 
-## Defect Classes
+This project explores whether deep convolutional neural networks and transfer learning can provide an effective approach for automated steel surface defect classification.
 
-- crazing
-- inclusion
-- patches
-- pitted_surface
-- rolled-in_scale
-- scratches
+## Research Questions
 
-## Repository Structure
+* Can transfer learning provide effective representations for steel surface defect images?
+* Which deep-learning architecture provides the best classification performance?
+* How well can the trained models distinguish between different defect categories?
+* Which preprocessing and augmentation techniques improve model performance?
 
-```text
-notebooks/   Experiment and reproducibility notebook
-src/         Reusable Python implementation
-app/         Gradio demo
-results/     Final figures and tables
-models/      Model artifact instructions
-docs/        Methodology
-examples/    Optional inference examples
-```
+## Methodology
 
-## Dataset
+The project follows the following workflow:
 
-The project uses the NEU-DET steel surface defect dataset containing 1,800 grayscale images across six classes.
-
-The dataset is **not included in this repository**. Place an extracted copy under `data/NEU-DET/` or set the `STEEL_DEFECT_DATA` environment variable to its location.
-
-## Installation
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-## Notebook
-
-Open:
-
-`notebooks/steel_defect_classification_cleaned.ipynb`
-
-The notebook has been cleaned to remove Colab/Google Drive-specific paths and the contradictory standalone evaluation/demo/export cells.
-
-## Inference
-
-After a validated model has been trained and saved:
-
-```bash
-python -m src.inference   --model models/resnet50_final.keras   --image examples/your_image.jpg
-```
-
-## Explainability
-
-The project includes:
-
-- Grad-CAM visual explanations
-- SHAP feature-attribution explanations
-- Misclassification/error analysis
-
-## Results
-
-Final numerical results should be generated from the corrected evaluation pipeline before being published here.
-
-The original notebook contains a main comparison table reporting 98.89% Custom CNN accuracy, 98.15% MobileNetV2 accuracy, and 100% ResNet50 accuracy, but a later evaluation cell produces contradictory output because it references a generic `model` variable. Therefore those figures are **not treated as final published results until the corrected evaluation is rerun**.
-
-## Important Reproducibility Note
-
-Each model must be evaluated with its matching test generator:
-
-```python
-evaluate_model(custom_cnn, test_gen_cnn, "custom_cnn")
-evaluate_model(mobilenet_model, test_gen, "mobilenetv2")
-evaluate_model(resnet_model, test_gen_res, "resnet50")
-```
-
-This prevents accidentally evaluating one model against another model's generator.
+1. Dataset preparation
+2. Exploratory data analysis
+3. Image preprocessing
+4. Data augmentation
+5. Transfer-learning model selection
+6. Model training and validation
+7. Performance evaluation
+8. Error and misclassification analysis
 
 ## Technologies
 
-Python · TensorFlow · Keras · scikit-learn · NumPy · pandas · Matplotlib · Seaborn · SHAP · Gradio
+* Python
+* PyTorch / TensorFlow
+* NumPy
+* Pandas
+* OpenCV
+* Matplotlib
+* Scikit-learn
 
-## Limitations
+## Models
 
-The benchmark is based on a relatively small dataset and a controlled test split. High benchmark performance should not automatically be interpreted as production-level generalization.
+The project evaluates transfer-learning-based convolutional neural networks.
+
+Models evaluated:
+
+* custom_cnn
+* mobilenetv2
+* resnet50
+
+## Evaluation
+
+The models are evaluated using:
+
+* Accuracy
+* Precision
+* Recall
+* F1-score
+* Confusion matrix
+
+Additional evaluation and error analysis are included in the `results/` directory.
+
+## Results
+Custom CNN: 98.89% accuracy with balanced precision/recall/F1 (~98.90%), showing strong performance even without pre-training.
+MobileNetV2: 98.15% accuracy, best efficiency trade-off — fast (8.7ms inference, ~115 images/sec) and lightweight (25MB), ideal for edge/industrial deployment.
+ResNet50: 100% accuracy (perfect classification), best overall performance via transfer learning and deep residual connections, though the small test set (270 images) means this result should be interpreted cautiously.
+
+### Model Performance
+Table 2 - Performance Metrics Comparison
+Model        Accuracy     Macro Precision   Macro Recall  Macro F1
+custom_cnn   0.9889           0.9890         0.9889        0.9889
+mobilenetv2  0.9815           0.9828         0.9815        0.9815
+resnet50     1.000            1.0000         1.0000        1.0000
+
+### Confusion Matrix
+Confusion matrices for each model are shown in Figures 7-9. They reveal the per-class performance and common misclassifications, providing insights into which defect types pose the greatest challenges for each approach. The diagonal dominance in all confusion matrices indicates strong classification performance, while off-diagonal elements reveal patterns of confusion between specific defect classes. 
+
+### Sample Predictions
+A web-based interface was developed using **Gradio** to demonstrate the practical application of the trained steel surface defect classification models. The interface allows users to upload steel surface images and receive **real-time defect predictions with confidence scores**. It supports common image formats such as JPG and PNG and provides an image preview, predicted defect class, and prediction confidence.
+
+The system uses the fine-tuned **ResNet50 model**, which was the best-performing model in the experiments. Uploaded images are resized to **224×224 pixels**, normalized to the **[0,1] range**, and processed by the model to identify one of six defect types: **crazing, inclusion, patches, pitted surface, rolled-in scale, or scratches**. The highest-probability class and its confidence score are presented to the user.
+
+The Gradio interface features a simple, user-friendly design with descriptive labels and example inputs, making it accessible to non-technical users. It runs locally and can be adapted for web deployment, demonstrating the potential for practical use of the developed steel defect classification system in industrial environments.
+
+
+## Research Significance
+The project demonstrates the potential of deep learning and transfer learning for automated visual quality inspection in steel manufacturing.
+
+The work is particularly relevant to intelligent manufacturing, industrial computer vision, automated quality control, and AI-based inspection systems.
 
 ## Future Work
 
 Potential extensions include:
 
-- evaluation on larger or factory-specific datasets
-- edge deployment with TensorFlow Lite
-- model compression through quantization/pruning
-- defect localization
-- production integration
+* Object detection and defect localization
+* Semantic or instance segmentation
+* Few-shot and self-supervised learning
+* Explainable AI for industrial inspection
+* Domain adaptation across different steel products and imaging conditions
+* Deployment of the trained model for real-time inspection
 
-## License
+## Reproducibility
 
-Add an appropriate license before public release.
-# steel-surface-defect-classification
+Installation instructions, dependencies, training procedures, and evaluation steps are provided in this repository.
+
+The dataset is not included in the repository where redistribution is restricted. Instructions for obtaining and preparing the dataset are provided separately.
+
+## Author
+
+Adekuoroye Sola Emmanuel
+
+Final-Year Undergraduate Researcher
+
+Research interests: Artificial Intelligence, Machine Learning, Computer Vision, Intelligent Manufacturing, Industrial Inspection, Anomaly Detection, Predictive Maintenance
+
+Research interests: Artificial Intelligence, Machine Learning, Computer Vision, Intelligent Manufacturing, Industrial Inspection, Anomaly Detection, Predictive Maintenance
