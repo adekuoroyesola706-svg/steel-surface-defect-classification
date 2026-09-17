@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "steel-surface-defect-classification"
+version = "0.1.0"
+description = "Six-class steel surface defect classification with CNN transfer learning and explainability."
+requires-python = ">=3.10"
+dependencies = [
+  "tensorflow",
+  "numpy",
+  "pandas",
+  "scikit-learn",
+  "matplotlib",
+  "seaborn",
+  "shap",
+  "gradio",
+  "jupyter",
+]
+
+[tool.setuptools.packages.find]
+include = ["src*"]
